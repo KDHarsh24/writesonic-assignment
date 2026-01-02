@@ -33,6 +33,23 @@ When someone asks ChatGPT "What's the best CRM for startups?", some brands get m
 - **Top Citations** - Most cited sources in AI responses
 - **Historical Tracking** - Track visibility trends over time
 
+## ⚠️ Important Note: OpenAI API & Demo Mode
+
+**Note regarding OpenAI API Keys:**
+Due to credit card availability issues, a valid paid OpenAI API key could not be maintained for this submission. However, the application is fully functional!
+
+I have implemented two robust fallback mechanisms to ensure you can test the application thoroughly:
+
+1.  **Mock Data Engine (Demo Mode)**:
+    - If the API key is invalid or quota is exceeded, the system automatically switches to a high-fidelity mock engine.
+    - It generates realistic queries and Markdown-formatted AI responses based on your brand's category.
+    - It performs "fuzzy matching" to correctly identify your brand (e.g., matching "HubSpot Inc" to "HubSpot") and calculates sentiment/rankings locally.
+
+2.  **Web Crawler (Bonus Feature)**:
+    - You can opt to use the **"Use Crawler (Beta)"** feature in the dashboard.
+    - This launches a real browser (Puppeteer) to visit ChatGPT's web UI, types your query, and extracts the *actual* response from the free version of ChatGPT.
+    - This bypasses the API entirely!
+
 ## 🚀 Getting Started
 
 ### Prerequisites
