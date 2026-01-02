@@ -201,4 +201,4 @@ MIT License - Feel free to use and modify.
 
 ---
 
-Built with ❤️ for the Writesonic Engineering Challenge
+Build by Harsh Kumar Das for the Writesonic Engineering Challenge
