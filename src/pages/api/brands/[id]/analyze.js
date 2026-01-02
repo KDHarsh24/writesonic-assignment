@@ -3,6 +3,7 @@ import Brand from '../../../../models/Brand';
 import Query from '../../../../models/Query';
 import AnalysisResult from '../../../../models/AnalysisResult';
 import { getAIResponseWithContext, analyzeResponse } from '../../../../lib/openai';
+import { crawlChatGPT } from '../../../../lib/crawler';
 
 export const config = {
   api: {
@@ -12,13 +13,23 @@ export const config = {
   maxDuration: 300, // 5 minutes for analysis
 };
 
-async function runSingleAnalysis(brand, query) {
+async function runSingleAnalysis(brand, query, useCrawler = false) {
   try {
     // Update query status
     await Query.findByIdAndUpdate(query._id, { status: 'processing' });
 
     // Get AI response
-    const aiResponse = await getAIResponseWithContext(query.query, brand.name, brand.category);
+    let aiResponse;
+    if (useCrawler) {
+      try {
+        aiResponse = await crawlChatGPT(query.query);
+      } catch (err) {
+        console.error('Crawler failed, falling back to API/Mock:', err);
+        aiResponse = await getAIResponseWithContext(query.query, brand.name, brand.category);
+      }
+    } else {
+      aiResponse = await getAIResponseWithContext(query.query, brand.name, brand.category);
+    }
 
     // Analyze the response
     const analysis = await analyzeResponse(aiResponse, brand.name, brand.category);
@@ -108,8 +119,10 @@ export default async function handler(req, res) {
 
     // Run analysis for all queries
     const results = [];
+    const useCrawler = req.body.useCrawler === true;
+    
     for (const query of queries) {
-      const result = await runSingleAnalysis(brand, query);
+      const result = await runSingleAnalysis(brand, query, useCrawler);
       if (result) {
         results.push(result);
       }

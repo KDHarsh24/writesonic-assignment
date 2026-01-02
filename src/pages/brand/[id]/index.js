@@ -93,6 +93,7 @@ export default function BrandDashboard() {
   const [newQuery, setNewQuery] = useState('');
   const [showAddQuery, setShowAddQuery] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [useCrawler, setUseCrawler] = useState(false);
 
   const fetchData = useCallback(async () => {
     if (!id) return;
@@ -178,6 +179,7 @@ export default function BrandDashboard() {
       const res = await fetch(`/api/brands/${id}/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ useCrawler }),
       });
       const data = await res.json();
       if (data.success) {
@@ -260,23 +262,34 @@ export default function BrandDashboard() {
                 <Settings className="w-5 h-5" />
               </Link>
               {pendingQueries > 0 && (
-                <button
-                  onClick={runAnalysis}
-                  disabled={analyzing}
-                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-200 font-medium text-sm shadow-lg shadow-primary-500/25 disabled:opacity-50"
-                >
-                  {analyzing ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 mr-2" />
-                      Run Analysis ({pendingQueries})
-                    </>
-                  )}
-                </button>
+                <div className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-2 text-sm text-dark-600 cursor-pointer select-none bg-white px-2 py-1 rounded border border-dark-200 hover:bg-dark-50">
+                    <input 
+                      type="checkbox" 
+                      checked={useCrawler} 
+                      onChange={(e) => setUseCrawler(e.target.checked)}
+                      className="rounded border-dark-300 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="font-medium">Use Crawler of GPT</span>
+                  </label>
+                  <button
+                    onClick={runAnalysis}
+                    disabled={analyzing}
+                    className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-200 font-medium text-sm shadow-lg shadow-primary-500/25 disabled:opacity-50"
+                  >
+                    {analyzing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 mr-2" />
+                        Run Analysis ({pendingQueries})
+                      </>
+                    )}
+                  </button>
+                </div>
               )}
             </div>
           </div>
